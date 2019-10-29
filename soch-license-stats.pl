@@ -15,7 +15,7 @@ use XML::XPath;
 # Enforce proper garbage collection on XML::XPath:
 $XML::XPath::SafeMode = 1;
 
-my $base = join('', 'http://kulturarvsdata.se/ksamsok/api?');
+my $base = join('', 'http://kulturarvsdata.se/ksamsok/api');
 
 my $ua = LWP::UserAgent->new();
 $ua->agent('SOCH-licenses 0.1');
