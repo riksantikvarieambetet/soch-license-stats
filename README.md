@@ -8,6 +8,5 @@ Calculates SOCH queries of unlicensed images by institution as well as related s
 
 1. `soch-license-stats.pl` requires Perl 5.22 or greater, and uses a few non-core modules. Using [`cpanm`](https://metacpan.org/pod/App::cpanminus), run `cpanm LWP::UserAgent Text::CSV URI::Escape XML::XPath` to install them.
 2. Run `soch-license-stats.pl`
-3. Enter your SOCH API key when prompted to do so, or press RETURN to use a default test key.
-4. ...time passes...
-5. A CSV appears in the current working directory!
+3. ...time passes...
+4. A CSV appears in the current working directory!
