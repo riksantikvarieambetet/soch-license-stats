@@ -15,11 +15,7 @@ use XML::XPath;
 # Enforce proper garbage collection on XML::XPath:
 $XML::XPath::SafeMode = 1;
 
-say q(Enter your API key, or press RETURN to use a test key:);
-my $key = readline();
-chomp($key);
-$key ||= 'test-h3935Q0m';
-my $base = join('', 'http://kulturarvsdata.se/ksamsok/api?x-api=', $key, '&version=1.1');
+my $base = join('', 'http://kulturarvsdata.se/ksamsok/api?');
 
 my $ua = LWP::UserAgent->new();
 $ua->agent('SOCH-licenses 0.1');
@@ -31,21 +27,21 @@ open my $fh, '>', 'org-licenses.csv';
 my $csv = Text::CSV->new({binary => 1});
 
 # Query SOCH for a list of all service organisations providing data:
-my $req = HTTP::Request->new(GET => join('', $base, '&method=statistic', '&index=serviceOrganization=*'));
+my $req = HTTP::Request->new(GET => join('', $base, '?method=statistic', '&index=serviceOrganization=*'));
 my @providers = get_values($ua, $req, $stats_path);
 
 # Query SOCH for a list of all licenses in use, plus the empty string:
-$req = HTTP::Request->new(GET => join('', $base, '&method=statistic', '&index=mediaLicense=*'));
+$req = HTTP::Request->new(GET => join('', $base, '?method=statistic', '&index=mediaLicense=*'));
 my @licenses = (get_values($ua, $req, $stats_path), '');
 $csv->say($fh, ['Leverantör', 'Totala objekt', sort @licenses]);
 
 for my $provider (sort @providers) {
-	my $req = HTTP::Request->new(GET => join('', $base, '&method=search', '&hitsPerPage=1', '&startRecord=1', '&query=', uri_escape(join('', 'thumbnailExists=j AND serviceOrganization="')), $provider, '"'));
+	my $req = HTTP::Request->new(GET => join('', $base, '?method=search', '&hitsPerPage=1', '&startRecord=1', '&query=', uri_escape(join('', 'thumbnailExists=j AND serviceOrganization="')), $provider, '"'));
 	my ($total) = get_values($ua, $req, $count_path);
 	my @fields;
 	push @fields, $provider, $total;
 	for my $license (sort @licenses) {
-		my $req = HTTP::Request->new(GET => join('', $base, '&method=search', '&hitsPerPage=1', '&startRecord=1', '&query=', uri_escape(join('', 'thumbnailExists=j AND serviceOrganization="')), $provider, uri_escape(join('', '" AND mediaLicense="', $license, '"'))));
+		my $req = HTTP::Request->new(GET => join('', $base, '?method=search', '&hitsPerPage=1', '&startRecord=1', '&query=', uri_escape(join('', 'thumbnailExists=j AND serviceOrganization="')), $provider, uri_escape(join('', '" AND mediaLicense="', $license, '"'))));
 		my ($instances) = get_values($ua, $req, $count_path);
 		push @fields, $instances;
 	}
